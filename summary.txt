@@ -1,0 +1,180 @@
+########################
+# Additional Files
+########################
+# runs
+# results
+# __pycache__
+# data
+# inception
+
+########################
+# Filled Code
+########################
+# ../codes/GAN/GAN.py:1
+            # layer1
+            nn.ConvTranspose2d(self.latent_dim, self.hidden_dim * 4, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(self.hidden_dim * 4),
+            nn.ReLU(True),
+            # layer2
+            nn.ConvTranspose2d(self.hidden_dim * 4, self.hidden_dim * 2, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(self.hidden_dim * 2),
+            nn.ReLU(True),
+            # layer3
+            nn.ConvTranspose2d(self.hidden_dim * 2, self.hidden_dim, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(self.hidden_dim),
+            nn.ReLU(True),
+            # layer4
+            nn.ConvTranspose2d(self.hidden_dim, self.num_channels, 4, 2, 1, bias=False),
+            nn.Tanh()
+
+# ../codes/GAN/trainer.py:1
+        real_labels = torch.ones(real_imgs.size(0), device=self._device)
+        output_real = self._netD(real_imgs).view(-1)
+        loss_D_real = BCE_criterion(output_real, real_labels)
+        D_x = output_real.mean().item()
+        loss_D_real.backward()
+
+# ../codes/GAN/trainer.py:2
+        fake_labels = torch.zeros(fake_imgs.size(0), device=self._device)
+        output_fake = self._netD(fake_imgs.detach()).view(-1)
+        loss_D_fake = BCE_criterion(output_fake, fake_labels)
+        D_G_z1 = output_fake.mean().item()
+        loss_D_fake.backward()
+
+# ../codes/GAN/trainer.py:3
+        output_fake_for_gen = self._netD(fake_imgs).view(-1)
+        loss_G = BCE_criterion(output_fake_for_gen, real_labels)
+        D_G_z2 = output_fake_for_gen.mean().item()
+
+
+########################
+# References
+########################
+
+########################
+# Other Modifications
+########################
+# _codes/GAN/GAN.py -> ../codes/GAN/GAN.py
+# 4 +
+# 37 -         '''
+# 37 ?         ^^^
+# 52 +         """
+# 52 ?         ^^^
+# 40 -         '''
+# 40 ?         ^^^
+# 55 +         """
+# 55 ?         ^^^
+# 46 -             if os.path.exists(os.path.join(ckpt_dir, 'generator.bin')):
+# 46 ?                                                      ^             ^
+# 61 +             if os.path.exists(os.path.join(ckpt_dir, "generator.bin")):
+# 61 ?                                                      ^             ^
+# 47 -                 path = os.path.join(ckpt_dir, 'generator.bin')
+# 47 ?                                               ^             ^
+# 62 +                 path = os.path.join(ckpt_dir, "generator.bin")
+# 62 ?                                               ^             ^
+# 64 +                 path = os.path.join(
+# 65 +                     ckpt_dir,
+# 49 -                 path = os.path.join(ckpt_dir, str(max(int(name) for name in os.listdir(ckpt_dir))), 'generator.bin')
+# 49 ?                 ---- - ^^^^^^^^^^^^^^^^^^^^^^                                                      -----------------
+# 66 +                     str(max(int(name) for name in os.listdir(ckpt_dir))),
+# 66 ?                   ^
+# 67 +                     "generator.bin",
+# 68 +                 )
+# 57 -         path = os.path.join(ckpt_dir, str(global_step), 'generator.bin')
+# 57 ?                                                         ^             ^
+# 76 +         path = os.path.join(ckpt_dir, str(global_step), "generator.bin")
+# 76 ?                                                         ^             ^
+# 80 -             nn.Sigmoid()
+# 99 +             nn.Sigmoid(),
+# 99 ?                         +
+# 88 -             if os.path.exists(os.path.join(ckpt_dir, 'discriminator.bin')):
+# 88 ?                                                      ^                 ^
+# 107 +             if os.path.exists(os.path.join(ckpt_dir, "discriminator.bin")):
+# 107 ?                                                      ^                 ^
+# 89 -                 path = os.path.join(ckpt_dir, 'discriminator.bin')
+# 89 ?                                               ^                 ^
+# 108 +                 path = os.path.join(ckpt_dir, "discriminator.bin")
+# 108 ?                                               ^                 ^
+# 91 -                 path = os.path.join(ckpt_dir, str(max(int(name) for name in os.listdir(ckpt_dir))), 'discriminator.bin')
+# 110 +                 path = os.path.join(
+# 111 +                     ckpt_dir,
+# 112 +                     str(max(int(name) for name in os.listdir(ckpt_dir))),
+# 113 +                     "discriminator.bin",
+# 114 +                 )
+# 99 -         path = os.path.join(ckpt_dir, str(global_step), 'discriminator.bin')
+# 99 ?                                                         ^                 ^
+# 122 +         path = os.path.join(ckpt_dir, str(global_step), "discriminator.bin")
+# 122 ?                                                         ^                 ^
+# _codes/GAN/main.py -> ../codes/GAN/main.py
+# 7 + import numpy as np
+# 8 + import random
+# 14 + from torchvision.utils import make_grid
+# 15 + from torchvision.utils import save_image
+# 33 +     parser.add_argument("--do_interpolated", action="store_true")
+# 31 -     config = 'z-{}_batch-{}_num-train-steps-{}'.format(args.latent_dim, args.batch_size, args.num_training_steps)
+# 36 +     # Global Random Seed
+# 37 +     args.seed = random.randint(2022, 2025)
+# 38 +     print("Random Seed", args.seed)
+# 39 +     np.random.seed(args.seed)
+# 40 +     random.seed(args.seed)
+# 41 +     torch.manual_seed(args.seed)
+# 42 +     torch.cuda.manual_seed(args.seed)
+# 43 +     torch.cuda.manual_seed_all(args.seed)
+# 44 +     torch.backends.cudnn.deterministic = True
+# 45 +     torch.backends.cudnn.benchmark = False
+# 46 +
+# 47 +     config = f"{args.latent_dim}_{args.generator_hidden_dim}"
+# 34 -     device = torch.device('cuda' if torch.cuda.is_available() and not args.no_cuda else 'cpu')
+# 34 ?                           ^    ^                                                        ^   ^
+# 50 +     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+# 50 ?                           ^    ^                                                        ^   ^
+# 80 +             imgs = netG.forward(
+# 64 -             imgs = netG.forward(torch.randn(args.batch_size, netG.latent_dim, 1, 1, device=device))
+# 64 ?             ---- - ^^^^^^^^^^^^^                                                                  -
+# 81 +                 torch.randn(args.batch_size, netG.latent_dim, 1, 1, device=device)
+# 81 ?               ^^
+# 82 +             )
+# 73 -     tb_writer.add_scalar('fid', fid)
+# 73 ?                          ^   ^
+# 91 +     tb_writer.add_scalar("fid", fid)
+# 91 ?                          ^   ^
+# 74 -     print("FID score: {:.3f}".format(fid), flush=True)
+# 92 +     print("FID score: {:.3f}".format(fid), flush=True)
+# 92 ?                                                       +
+# 93 +
+# 94 +     if args.do_interpolated:
+# 95 +         for j in range(5):  # At least 5 pairs
+# 96 +             z1 = torch.randn(1, args.latent_dim, 1, 1, device=device)
+# 97 +             z2 = torch.randn(1, args.latent_dim, 1, 1, device=device)
+# 98 +             with torch.no_grad():
+# 99 +                 interpolated_images = []
+# 100 +                 for i in range(11):  # 10 interpolations + 1 endpoint
+# 101 +                     alpha = i / 10
+# 102 +                     z = (1 - alpha) * z1 + alpha * z2
+# 103 +                     interpolated_image = netG(z)
+# 104 +                     interpolated_images.append(interpolated_image)
+# 105 +
+# 106 +                 interpolated_images = torch.cat(interpolated_images, 0)
+# 107 +                 img_grid = make_grid(interpolated_images, nrow=11, normalize=True, value_range=(0, 1))
+# 108 +                 save_image(img_grid, f"interpolated_{j}.png")
+# _codes/GAN/trainer.py -> ../codes/GAN/trainer.py
+# 11 + from torch.optim.lr_scheduler import ReduceLROnPlateau
+# 31 +         # self._discriminator_training_steps = 2
+# 32 +         # self._schedulerG = ReduceLROnPlateau(self._optimG, mode='min', factor=0.1, patience=10, verbose=True)
+# 33 +         # self._schedulerD = ReduceLROnPlateau(self._optimD, mode='min', factor=0.1, patience=10, verbose=True)
+# 32 -         """DO NOT FORGET TO ZERO_GRAD netD and netG
+# 33 -         *   Returns:
+# 34 -             *   loss of netD (scalar)
+# 35 -             *   loss of netG (scalar)
+# 36 -             *   average D(real_imgs) before updating netD
+# 37 -             *   average D(fake_imgs) before updating netD
+# 38 -             *   average D(fake_imgs) after updating netD
+# 39 -         """
+# 61 -
+# 61 +
+# 70 -
+# 70 +
+# 78 -
+# 79 +
+# 90 +
+
