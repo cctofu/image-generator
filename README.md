@@ -71,10 +71,6 @@ Interpolation experiments show smooth transitions between digits, confirming tha
 - Produces realistic, gradual transformations without abrupt artifacts.  
 - Avoids **mode collapse**, maintaining diversity:contentReference[oaicite:2]{index=2}.  
 
-Example interpolation results:  
-
-![Interpolated Samples](docs/interpolation.png)
-
 ---
 
 ## ✅ Key Takeaways
